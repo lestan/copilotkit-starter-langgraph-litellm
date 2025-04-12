@@ -4,6 +4,9 @@ This example contains a simple starter project which includes two different agen
 
 It uses Langgraph as the agentic framework configured to use LiteLLM as the model gateway to enable running a variety of models (open, local, closed, etc.)
 
+### Prerequisite
+Assumes you already have [LiteLLM](https://www.litellm.ai) installed and running and properly configured with an Organization, API Key and a Model you want to use set up with an OpenAI provider so that you can use an OpenAI compatible API.  These steps are not covered in this README.
+
 ## Running the Agent
 
 First, install the backend dependencies:
