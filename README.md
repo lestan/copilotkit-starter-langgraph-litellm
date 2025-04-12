@@ -2,7 +2,7 @@
 
 This example contains a simple starter project which includes two different agents, one written in Python and one in JavaScript.
 
-**These instructions assume you are in the `coagents-starter/` directory**
+It uses Langgraph as the agentic framework configured to use LiteLLM as the model gateway to enable running a variety of models (open, local, closed, etc.)
 
 ## Running the Agent
 
@@ -15,29 +15,34 @@ cd agent-py
 poetry install
 ```
 
-### JS Agent
+### JS Agent (only if the Python version isn't used)
 
 ```sh
 cd agent-js
 pnpm install
 ```
 
-Then, create a `.env` file inside `./agent-py` or `./agent-js` with the following:
+Then, create a `.env` file inside `./agent-py` or `./agent-js` by copying `.env.example` and filling out the values
 
 ```
-OPENAI_API_KEY=...
+PORT=... # the port Langgraph should run on
+API_BASE=... # the base URL for the LiteLLM server
+API_KEY=... # the API key for LiteLLM
+MODEL=... # the LiteLLM configured model name
+ORG=... # the LiteLLM configured organization
 ```
 
-IMPORTANT:
-Make sure the OpenAI API Key you provide, supports gpt-4o.
-
-Then, run the demo:
+Then, run the demo using langgraph studio:
 
 Python
 
 ```sh
-poetry run demo
+langgraph dev
 ```
+
+A browser window will open to Langgraph Studio that points to the local agent server.  
+
+**IMPORTANT** Make sure to use Chrome, not Safari
 
 
 ## Running the UI
@@ -55,11 +60,7 @@ Then start the client:
 pnpm run dev
 ```
 
-Then, create a `.env` file inside `./ui` with the following:
-
-```
-OPENAI_API_KEY=...
-```
+To change the port, modify `package.json` and update the port in the `dev` script.
 
 If you're using the **JS** agent, uncomment the code inside the `app/api/copilotkit/route.ts`, `remoteEndpoints` action: 
 
@@ -98,5 +99,5 @@ Make sure to create the `.env` mentioned above first!
 
 A few things to try if you are running into trouble:
 
-1. Make sure there is no other local application server running on the 8000 port.
-2. Under `/agent/greeter/demo.py`, change `0.0.0.0` to `127.0.0.1` or to `localhost`
+1. Configure the right ports in agent-py/.env for the Langgraph port and in package.json for the frontend port.
+2. Use Chrome so Langgraph Studio works correctly
