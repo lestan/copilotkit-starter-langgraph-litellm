@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: any }) {
         <CopilotKit
           agent="sample_agent" // lock the agent to the sample_agent since we only have one agent
           runtimeUrl="/api/copilotkit"
-          showDevConsole={false}
+          showDevConsole={true}
         >
           {children}
         </CopilotKit>

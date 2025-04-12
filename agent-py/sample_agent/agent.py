@@ -4,7 +4,6 @@ It defines the workflow graph, state, tools, nodes and edges.
 """
 
 from typing_extensions import Literal
-from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, AIMessage
 from langchain_core.runnables import RunnableConfig
 from langchain.tools import tool
@@ -13,6 +12,11 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.types import Command
 from langgraph.prebuilt import ToolNode
 from copilotkit import CopilotKitState
+from langchain_community.chat_models import ChatLiteLLM
+import dotenv
+import os
+
+dotenv.load_dotenv()  # pylint: disable=wrong-import-position
 
 class AgentState(CopilotKitState):
     """
@@ -26,7 +30,7 @@ class AgentState(CopilotKitState):
     # your_custom_agent_state: str = ""
 
 @tool
-def get_weather(location: str):
+async def get_weather(location: str, config: RunnableConfig) -> str:
     """
     Get the weather for a given location.
     """
@@ -56,13 +60,24 @@ async def chat_node(state: AgentState, config: RunnableConfig) -> Command[Litera
     """
     
     # 1. Define the model
-    model = ChatOpenAI(model="gpt-4o")
+    #model = ChatOpenAI(model="gpt-4o")
+    # get values from env
+    model = ChatLiteLLM(
+        model=os.getenv("MODEL"), # configured in LiteLLM
+        api_base=os.getenv("API_BASE"), # URL to the LiteLLM server
+        api_key=os.getenv("API_KEY"), # API key for LiteLLM
+        organization=os.getenv("ORG"), # organization configured in LiteLLM
+        custom_llm_provider="openai", # mimic OpenAI API
+        temperature=0.0, # temperature for the model
+        streaming=True, # enable streaming
+        verbose=True, # enable verbose logging
+    )
 
     # 2. Bind the tools to the model
     model_with_tools = model.bind_tools(
         [
-            *state["copilotkit"]["actions"],
-            get_weather,
+            *state["copilotkit"]["actions"], # frontend tools
+            get_weather, # backend tools
             # your_tool_here
         ],
 
